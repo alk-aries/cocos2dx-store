@@ -141,8 +141,7 @@ namespace soomla {
          CCStoreConsts::DICT_ELEMENT_DEVELOPERPAYLOAD - __String -
          The developer payload.
          */
-        virtual void onMarketPurchase(CCPurchasableVirtualItem *purchasableVirtualItem, cocos2d::__String *token, cocos2d::__String *payload, cocos2d::__String *originalJson,
-                                      cocos2d::__String *signature, cocos2d::__String *userId);
+        virtual void onMarketPurchase(CCPurchasableVirtualItem *purchasableVirtualItem, cocos2d::__String *payload, cocos2d::__Dictionary *extra);
 
         /**
          Fired when a purchase process has started, where the item is being
