@@ -170,6 +170,12 @@
         VERIFY_URL = verificationUrl;
     }];
     
+    [ndkGlue registerCallHandlerForKey:@"CCSoomlaStore::setVHEADERS" withBlock:^(NSDictionary * parameters, NSMutableDictionary *retParameters) {
+        NSDictionary *headers = (NSDictionary *)[parameters objectForKey:@"headers"];
+        LogDebug(@"SOOMLA SoomlaStoreBridge", ([NSString stringWithFormat:@"Adding iOS Verification Headers: %@", headers.description]));
+        VERIFY_HEADERS = headers;
+    }];
+    
     [ndkGlue registerCallHandlerForKey:@"CCStoreInfo::loadFromDB" withBlock:^(NSDictionary *parameters, NSMutableDictionary *retParameters) {
         [[StoreInfo getInstance] loadFromDB];
     }];

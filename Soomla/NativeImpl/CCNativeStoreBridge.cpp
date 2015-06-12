@@ -52,6 +52,14 @@ namespace soomla {
             CCNdkBridge::callNative(params, NULL);
         }
         
+        __Dictionary *VHEADERS = dynamic_cast<__Dictionary *>(storeParams->objectForKey("VHEADERS"));
+        if (VHEADERS != NULL) {
+            __Dictionary *params = __Dictionary::create();
+            params->setObject(__String::create("CCSoomlaStore::setVHEADERS"), "method");
+            params->setObject(VHEADERS, "headers");
+            CCNdkBridge::callNative(params, NULL);
+        }
+        
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
         __Bool *SSV = dynamic_cast<__Bool *>(storeParams->objectForKey("SSV"));
         if (SSV == NULL) {
