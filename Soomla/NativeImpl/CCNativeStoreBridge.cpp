@@ -44,6 +44,14 @@ namespace soomla {
     }
     
     void CCNativeStoreBridge::applyParams(cocos2d::__Dictionary *storeParams) {
+        __String *VURL = dynamic_cast<__String *>(storeParams->objectForKey("VURL"));
+        if (VURL != NULL) {
+            __Dictionary *params = __Dictionary::create();
+            params->setObject(__String::create("CCSoomlaStore::setVURL"), "method");
+            params->setObject(VURL, "vurl");
+            CCNdkBridge::callNative(params, NULL);
+        }
+        
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
         __Bool *SSV = dynamic_cast<__Bool *>(storeParams->objectForKey("SSV"));
         if (SSV == NULL) {

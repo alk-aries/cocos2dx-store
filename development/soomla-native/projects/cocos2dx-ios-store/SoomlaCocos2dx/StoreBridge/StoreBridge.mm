@@ -164,6 +164,12 @@
         VERIFY_PURCHASES = ssv;
     }];
     
+    [ndkGlue registerCallHandlerForKey:@"CCSoomlaStore::setVURL" withBlock:^(NSDictionary *parameters, NSMutableDictionary *retParameters) {
+        NSString *verificationUrl = (NSString*)[parameters objectForKey:@"vurl"];
+        LogDebug(@"SOOMLA SoomlaStoreBridge", ([NSString stringWithFormat:@"Setting iOS Verification URL to: %@", verificationUrl]));
+        VERIFY_URL = verificationUrl;
+    }];
+    
     [ndkGlue registerCallHandlerForKey:@"CCStoreInfo::loadFromDB" withBlock:^(NSDictionary *parameters, NSMutableDictionary *retParameters) {
         [[StoreInfo getInstance] loadFromDB];
     }];
