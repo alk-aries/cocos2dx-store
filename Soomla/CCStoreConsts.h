@@ -21,16 +21,13 @@
 * This class contains all static const String names of the keys/vals in the
 * JSON being parsed all around the SDK.
 */
-#include "CCCoreConsts.h"
-
 namespace soomla {
-    class CCStoreConsts: public CCCoreConsts {
+    class CCStoreConsts {
     public:
         static char const *JSON_STORE_CURRENCIES;
         static char const *JSON_STORE_CURRENCY_PACKS;
         static char const *JSON_STORE_GOODS;
         static char const *JSON_STORE_CATEGORIES;
-        static char const *JSON_STORE_NON_CONSUMABLES;
         static char const *JSON_STORE_GOODS_SU;
         static char const *JSON_STORE_GOODS_PA;
         static char const *JSON_STORE_GOODS_UP;
@@ -44,12 +41,13 @@ namespace soomla {
         static char const *JSON_MARKET_ITEM_ANDROID_ID;
         static char const *JSON_MARKET_ITEM_IOS_ID;
 
-        static char const *JSON_MARKET_ITEM_CONSUMABLE;
         static char const *JSON_MARKET_ITEM_PRICE;
 
         static char const *JSON_MARKET_ITEM_MARKET_PRICE;
         static char const *JSON_MARKET_ITEM_MARKET_TITLE;
         static char const *JSON_MARKET_ITEM_MARKET_DESCRIPTION;
+        static char const *JSON_MARKET_ITEM_MARKET_CURRENCY_CODE;
+        static char const *JSON_MARKET_ITEM_MARKET_PRICE_MICROS;
 
         static char const *JSON_EQUIPPABLE_EQUIPPING;
 
@@ -78,7 +76,6 @@ namespace soomla {
         static char const *JSON_ASSOCIATED_ITEM_ID;
 
         static char const *JSON_JSON_TYPE_MARKET_ITEM;
-        static char const *JSON_JSON_TYPE_NON_CONSUMABLE_ITEM;
         static char const *JSON_JSON_TYPE_VIRTUAL_CATEGORY;
         static char const *JSON_JSON_TYPE_VIRTUAL_CURRENCY;
         static char const *JSON_JSON_TYPE_VIRTUAL_CURRENCY_PACK;
@@ -88,6 +85,33 @@ namespace soomla {
         static char const *JSON_JSON_TYPE_SINGLE_USE_VG;
         static char const *JSON_JSON_TYPE_UPGRADE_VG;
         static char const *JSON_JSON_TYPE_ITEM;
+        
+        /** Events **/
+        
+        static char const *DICT_ELEMENT_BALANCE;
+        static char const *DICT_ELEMENT_CURRENCY;
+        static char const *DICT_ELEMENT_AMOUNT_ADDED;
+        static char const *DICT_ELEMENT_GOOD;
+        static char const *DICT_ELEMENT_EQUIPPABLEVG;
+        static char const *DICT_ELEMENT_UPGRADEVG;
+        static char const *DICT_ELEMENT_PURCHASABLE;
+        static char const *DICT_ELEMENT_PURCHASABLE_ID;
+        static char const *DICT_ELEMENT_DEVELOPERPAYLOAD;
+        static char const *DICT_ELEMENT_RECEIPT;
+        static char const *DICT_ELEMENT_EXTRA_INFO;
+        static char const *DICT_ELEMENT_ORIGINAL_JSON;
+        static char const *DICT_ELEMENT_SIGNATURE;
+        static char const *DICT_ELEMENT_USER_ID;
+        static char const *DICT_ELEMENT_SUCCESS;
+        static char const *DICT_ELEMENT_VERIFIED;
+        static char const *DICT_ELEMENT_TRANSACTION;
+        static char const *DICT_ELEMENT_ERROR_CODE;
+        static char const *DICT_ELEMENT_ERROR_MESSAGE;
+        static char const *DICT_ELEMENT_PRODUCTID;
+        static char const *DICT_ELEMENT_PRICE;
+        static char const *DICT_ELEMENT_TITLE;
+        static char const *DICT_ELEMENT_DESCRIPTION;
+        static char const *DICT_ELEMENT_MARKET_ITEMS;
 
         static char const *EVENT_BILLING_NOT_SUPPORTED;
         static char const *EVENT_BILLING_SUPPORTED;
@@ -99,15 +123,18 @@ namespace soomla {
         static char const *EVENT_ITEM_PURCHASED;
         static char const *EVENT_ITEM_PURCHASE_STARTED;
         static char const *EVENT_MARKET_PURCHASE_CANCELED;
+        static char const *EVENT_MARKET_PURCHASE_DEFERRED;
         static char const *EVENT_MARKET_PURCHASE;
         static char const *EVENT_MARKET_PURCHASE_STARTED;
         static char const *EVENT_MARKET_ITEMS_REFRESHED;
         static char const *EVENT_MARKET_ITEMS_REFRESH_STARTED;
+        static char const *EVENT_MARKET_ITEMS_REFRESH_FAILED;
         static char const *EVENT_MARKET_PURCHASE_VERIFICATION;
         static char const *EVENT_RESTORE_TRANSACTION_FINISHED;
         static char const *EVENT_RESTORE_TRANSACTION_STARTED;
-        static char const *EVENT_UNEXPECTED_ERROR_IN_STORE;
-        static char const *EVENT_STORE_CONTROLLER_INITIALIZED;
+        static char const *EVENT_UNEXPECTED_STORE_ERROR;
+        static char const *EVENT_VERIFICATION_STARTED;
+        static char const *EVENT_SOOMLA_STORE_INITIALIZED;
         static char const *EVENT_MARKET_REFUND;
         static char const *EVENT_IAB_SERVICE_STARTED;
         static char const *EVENT_IAB_SERVICE_STOPPED;

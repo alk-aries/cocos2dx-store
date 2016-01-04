@@ -1,6 +1,3 @@
-//
-// Created by Fedor on 04/06/14.
-//
 
 #include "CCVirtualItemReward.h"
 #include "CCStoreConsts.h"
@@ -12,7 +9,6 @@
 soomla::CCVirtualItemReward *soomla::CCVirtualItemReward::create(
         cocos2d::__String *rewardId,
         cocos2d::__String *name,
-        cocos2d::__Bool *repeatable,
         cocos2d::__Integer *amount,
         cocos2d::__String *associatedItemId
 ) {

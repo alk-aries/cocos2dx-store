@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-// Created by Fedor Shubin on 5/19/13.
+
 
 #include "CCMarketItem.h"
 
@@ -22,9 +22,9 @@ USING_NS_CC;
 
 namespace soomla {
 
-    CCMarketItem *CCMarketItem::create(__String *productId, __Integer *consumable, __Double *price) {
+    CCMarketItem *CCMarketItem::create(__String *productId, __Double *price) {
         CCMarketItem *ret = new CCMarketItem();
-        if (ret->init(productId, consumable, price)) {
+        if (ret->init(productId, price)) {
             ret->autorelease();
         }
         else {
@@ -34,9 +34,8 @@ namespace soomla {
         return ret;
     }
 
-    bool CCMarketItem::init(__String *productId, __Integer *consumable, __Double *price) {
+    bool CCMarketItem::init(__String *productId, __Double *price) {
         setProductId(productId);
-        setConsumable(consumable);
         setPrice(price);
 
         return true;
@@ -48,6 +47,8 @@ namespace soomla {
         char const* key = CCStoreConsts::JSON_MARKET_ITEM_ANDROID_ID;
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
         char const* key = CCStoreConsts::JSON_MARKET_ITEM_IOS_ID;
+#else
+        char const* key = CCStoreConsts::JSON_MARKET_ITEM_PRODUCT_ID;
 #endif
         cocos2d::Ref* obj = dict->objectForKey(key);
         CCAssert(obj == NULL || dynamic_cast<__String *>(obj), "invalid object type in dictionary");
@@ -57,35 +58,38 @@ namespace soomla {
             fillProductIdFromDict(dict);
         }
 
-        fillConsumableFromDict(dict);
         fillPriceFromDict(dict);
-
-        fillMarketPriceFromDict(dict);
+        
+        fillMarketPriceAndCurrencyFromDict(dict);
         fillMarketTitleFromDict(dict);
         fillMarketDescriptionFromDict(dict);
+        fillMarketCurrencyCodeFromDict(dict);
+        fillMarketPriceMicrosFromDict(dict);
 
         return true;
     }
 
     CCMarketItem::~CCMarketItem() {
         CC_SAFE_RELEASE(mProductId);
-        CC_SAFE_RELEASE(mConsumable);
         CC_SAFE_RELEASE(mPrice);
-        CC_SAFE_RELEASE(mMarketPrice);
+        CC_SAFE_RELEASE(mMarketPriceAndCurrency);
         CC_SAFE_RELEASE(mMarketTitle);
         CC_SAFE_RELEASE(mMarketDescription);
+        CC_SAFE_RELEASE(mMarketCurrencyCode);
+        CC_SAFE_RELEASE(mMarketPriceMicros);
     }
 
     __Dictionary *CCMarketItem::toDictionary() {
         __Dictionary *dict = __Dictionary::create();
 
         putProductIdToDict(dict);
-        putConsumableToDict(dict);
         putPriceToDict(dict);
 
-        putMarketPriceToDict(dict);
+        putMarketPriceAndCurrencyToDict(dict);
         putMarketTitleToDict(dict);
         putMarketDescriptionToDict(dict);
+        putMarketCurrencyCodeToDict(dict);
+        putMarketPriceMicrosToDict(dict);
 
         return this->putTypeData(dict, CCStoreConsts::JSON_JSON_TYPE_MARKET_ITEM);
     }

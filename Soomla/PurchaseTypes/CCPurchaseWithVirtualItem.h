@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-// Created by Fedor Shubin on 5/19/13.
+
 
 #ifndef __CCPurchaseWithVirtualItem_H_
 #define __CCPurchaseWithVirtualItem_H_
@@ -51,6 +51,16 @@ namespace soomla {
         static CCPurchaseWithVirtualItem * create(cocos2d::__String *itemId, cocos2d::__Integer *amount);
 
         virtual bool init(cocos2d::__String *itemId, cocos2d::__Integer *amount);
+        
+        /**
+         See parent
+         */
+        virtual void buy(const char* payload, CCError **error = NULL);
+        
+        /**
+         See parent
+         */
+        virtual bool canAfford(CCError **error = NULL);
 
         virtual ~CCPurchaseWithVirtualItem();
     };

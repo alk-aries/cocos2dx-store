@@ -14,12 +14,20 @@
  limitations under the License.
  */
 
-// Created by Fedor Shubin on 5/19/13.
-
 #include "CCPurchaseWithVirtualItem.h"
+#include "CCSoomlaUtils.h"
+#include "CCStoreInfo.h"
+#include "CCPurchasableVirtualItem.h"
+#include "CCStoreEventDispatcher.h"
+#include "CCVirtualGoodsStorage.h"
+#include "CCVirtualCurrencyStorage.h"
 
 namespace soomla {
-    CCPurchaseWithVirtualItem *CCPurchaseWithVirtualItem::create(cocos2d::CCString *itemId, cocos2d::CCInteger *amount) {
+    USING_NS_CC;
+    
+    #define TAG "SOOMLA PurchaseWithVirtualItem"
+    
+    CCPurchaseWithVirtualItem *CCPurchaseWithVirtualItem::create(cocos2d::__String *itemId, cocos2d::__Integer *amount) {
         CCPurchaseWithVirtualItem *ret = new CCPurchaseWithVirtualItem();
         if (ret->init(itemId, amount)) {
             ret->autorelease();
@@ -31,11 +39,79 @@ namespace soomla {
         return ret;
     }
 
-    bool CCPurchaseWithVirtualItem::init(cocos2d::CCString *itemId, cocos2d::CCInteger *amount) {
+    bool CCPurchaseWithVirtualItem::init(cocos2d::__String *itemId, cocos2d::__Integer *amount) {
         setItemId(itemId);
         setAmount(amount);
 
         return true;
+    }
+    
+    void CCPurchaseWithVirtualItem::buy(const char* payload, CCError **error) {
+        const char *associatedItemId = getAssociatedItemId()->getCString();
+        if (payload == NULL) {
+            payload = "";
+        }
+        CCPurchasableVirtualItem *associatedItem = dynamic_cast<CCPurchasableVirtualItem *>(CCStoreInfo::sharedStoreInfo()->getItemByItemId(associatedItemId, error));
+        if (associatedItem == NULL) {
+            CCSoomlaUtils::logError(TAG, __String::createWithFormat("Trying to buy an non-existing associated item: %s", associatedItemId)->getCString());
+            return;
+        }
+        
+        const char *targetItemId = getItemId()->getCString();
+        int amount = getAmount()->getValue();
+        CCSoomlaUtils::logDebug(TAG, __String::createWithFormat("Trying to buy a %s with %d pieces of %s",
+                                                                associatedItem->getName()->getCString(),
+                                                                amount,
+                                                                targetItemId)->getCString());
+        
+        CCVirtualItem *item = CCStoreInfo::sharedStoreInfo()->getItemByItemId(targetItemId, error);
+        if (item == NULL) {
+            CCSoomlaUtils::logError(TAG, __String::createWithFormat("Target virtual item %s doesn't exist !", targetItemId)->getCString());
+            return;
+        }
+        
+        CCStoreEventDispatcher::getInstance()->onItemPurchaseStarted(associatedItem, true);
+        
+        int balance = item->getBalance(error);
+        
+        if (balance < amount){
+            __String *errorStr = __String::createWithFormat("You tried to buy with itemId: %s but you don't have enough funds to buy it.",
+                                                            item->getItemId()->getCString());
+            CCError::tryFillError(error, errorStr, TAG);
+            return;
+        }
+        
+        item->take(amount);
+        
+        associatedItem->give(1);
+        
+        CCStoreEventDispatcher::getInstance()->onItemPurchased(associatedItem, __String::create(payload), true);
+    }
+    
+    bool CCPurchaseWithVirtualItem::canAfford(CCError **error) {
+        const char *associatedItemId = getAssociatedItemId()->getCString();
+        CCPurchasableVirtualItem *associatedItem = dynamic_cast<CCPurchasableVirtualItem *>(CCStoreInfo::sharedStoreInfo()->getItemByItemId(associatedItemId, error));
+        if (associatedItem == NULL) {
+            CCSoomlaUtils::logError(TAG, __String::createWithFormat("Trying to buy an non-existing associated item: %s", associatedItemId)->getCString());
+            return false;
+        }
+        
+        const char *targetItemId = getItemId()->getCString();
+        int amount = getAmount()->getValue();
+        CCSoomlaUtils::logDebug(TAG, __String::createWithFormat("Checking affordability of %s with %d pieces of %s",
+                                                                associatedItem->getName()->getCString(),
+                                                                amount,
+                                                                targetItemId)->getCString());
+        
+        CCVirtualItem *item = CCStoreInfo::sharedStoreInfo()->getItemByItemId(targetItemId, error);
+        if (item == NULL) {
+            CCSoomlaUtils::logError(TAG, __String::createWithFormat("Target virtual item %s doesn't exist !", targetItemId)->getCString());
+            return false;
+        }
+        
+        int balance = item->getBalance(error);
+        
+        return balance >= amount;
     }
 
     CCPurchaseWithVirtualItem::~CCPurchaseWithVirtualItem() {
