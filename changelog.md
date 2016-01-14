@@ -1,3 +1,55 @@
+### v4.6.3 [view commit logs](https://github.com/soomla/cocos2dx-store/compare/v4.6.2...v4.6.3)
+
+* Changes
+  * Removed binaries from repo
+
+### v4.6.2 [view commit logs](https://github.com/soomla/cocos2dx-store/compare/v4.6.1...v4.6.2)
+
+* Changes
+  * Added validation - not allowing null pointers in IStoreAssets
+
+### v4.6.1 [view commit logs](https://github.com/soomla/cocos2dx-store/compare/v4.6.0...v4.6.1)
+
+* New Features
+  * Added OnVerificationStarted event
+
+### v4.6.0 [view commit logs](https://github.com/soomla/cocos2dx-store/compare/v4.5.5...v4.6.0)
+
+* Features
+  * Added Market Purchase Deferred handling
+
+* Changes
+  * Added builder classes for initializarion params
+
+### v4.5.5 [view commit logs](https://github.com/soomla/cocos2dx-store/compare/v4.5.4...v4.5.5)
+
+* Fixes
+  * StoreInventory.RemoveGoodUpgrades crash in iOS when upgrade id is null
+
+* Changes
+  * Aligned JS implementation with C++
+
+### v4.5.4 [view commit logs](https://github.com/soomla/cocos2dx-store/compare/v4.5.3...v4.5.4)
+
+* Changes
+  * Removed binaries and improved build scripts
+
+### v4.5.3 [view commit logs](https://github.com/soomla/cocos2dx-store/compare/v4.5.2...v4.5.3)
+
+* Changes
+  * Improved docs
+  * Updated submodules
+
+### v4.5.2 [view commit logs](https://github.com/soomla/cocos2dx-store/compare/v4.5.1...v4.5.2)
+
+* New Features
+  * Support Google Play verification
+  * Support iOS param VERIFY_ON_ITUNES_FAILURE
+
+* Changes
+  * Support new structure of market purchase event
+
+
 ### v4.5.1 [view commit logs](https://github.com/soomla/cocos2dx-store/compare/v4.5.0...v4.5.1)
 
 * New Features

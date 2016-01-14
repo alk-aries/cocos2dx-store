@@ -10,6 +10,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * This bridge is used to populate events from the store to cocos2dx (through JNI).
  */
@@ -29,8 +33,9 @@ public class StoreEventHandlerBridge {
         BusProvider.getInstance().post(new ItemPurchaseStartedEvent(itemId, this));
     }
 
-    public void pushOnUnexpectedErrorInStore(String errorMessage) {
-        BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(errorMessage, this));
+    public void pushOnUnexpectedStoreError(int errorCode) {
+        BusProvider.getInstance().post(new UnexpectedStoreErrorEvent(
+                UnexpectedStoreErrorEvent.ErrorCode.values()[errorCode], this));
     }
 
     public void pushOnSoomlaStoreInitialized() {
@@ -68,7 +73,7 @@ public class StoreEventHandlerBridge {
             }
         });
     }
-
+	
     @Subscribe
     public void onIabServiceStarted(IabServiceStartedEvent iabServiceStartedEvent) {
         mGLThread.queueEvent(new Runnable() {
@@ -84,7 +89,7 @@ public class StoreEventHandlerBridge {
             }
         });
     }
-
+	
     @Subscribe
     public void onIabServiceStopped(IabServiceStoppedEvent iabServiceStoppedEvent) {
         mGLThread.queueEvent(new Runnable() {
@@ -256,9 +261,15 @@ public class StoreEventHandlerBridge {
                 try {
                     JSONObject parameters = new JSONObject();
                     parameters.put("method", "CCStoreEventHandler::onMarketPurchase");
-                    parameters.put("itemId", marketPurchaseEvent.PurchasableVirtualItem);
+                    parameters.put("itemId", marketPurchaseEvent.PurchasableVirtualItem.getItemId());
                     parameters.put("payload", marketPurchaseEvent.Payload);
-                    parameters.put("extra", marketPurchaseEvent.ExtraInfo);
+                    if (marketPurchaseEvent.ExtraInfo != null) {
+                        JSONObject extraInfo = new JSONObject();
+                        for (Map.Entry<String, String> entry : marketPurchaseEvent.ExtraInfo.entrySet()) {
+                            extraInfo.put(entry.getKey(), entry.getValue());
+                        }
+                        parameters.put("extraInfo", extraInfo);
+                    }
                     NdkGlue.getInstance().sendMessageWithParameters(parameters);
                 } catch (JSONException e) {
                     throw new IllegalStateException(e);
@@ -276,6 +287,23 @@ public class StoreEventHandlerBridge {
                     JSONObject parameters = new JSONObject();
                     parameters.put("method", "CCStoreEventHandler::onMarketPurchaseStarted");
                     parameters.put("itemId", marketPurchaseStartedEvent.getPurchasableVirtualItem().getItemId());
+                    NdkGlue.getInstance().sendMessageWithParameters(parameters);
+                } catch (JSONException e) {
+                    throw new IllegalStateException(e);
+                }
+            }
+        });
+    }
+
+    @Subscribe
+    public void onVerificationStarted(final VerificationStartedEvent verificationStartedEvent) {
+        mGLThread.queueEvent(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    JSONObject parameters = new JSONObject();
+                    parameters.put("itemId", verificationStartedEvent.getPurchasableVirtualItem().getItemId());
+                    parameters.put("method", "CCStoreEventHandler::onVerificationStarted");
                     NdkGlue.getInstance().sendMessageWithParameters(parameters);
                 } catch (JSONException e) {
                     throw new IllegalStateException(e);
@@ -398,7 +426,7 @@ public class StoreEventHandlerBridge {
     }
 
     @Subscribe
-    public void onUnexpectedErrorInStore(UnexpectedStoreErrorEvent unexpectedStoreErrorEvent) {
+    public void onUnexpectedStoreError(final UnexpectedStoreErrorEvent unexpectedStoreErrorEvent) {
         if (unexpectedStoreErrorEvent.Sender == this) {
             return;
         }
@@ -407,7 +435,8 @@ public class StoreEventHandlerBridge {
             public void run() {
                 try {
                     JSONObject parameters = new JSONObject();
-                    parameters.put("method", "CCStoreEventHandler::onUnexpectedErrorInStore");
+                    parameters.put("method", "CCStoreEventHandler::onUnexpectedStoreError");
+                    parameters.put("errorCode", unexpectedStoreErrorEvent.getErrorCode().ordinal());
                     NdkGlue.getInstance().sendMessageWithParameters(parameters);
                 } catch (JSONException e) {
                     throw new IllegalStateException(e);

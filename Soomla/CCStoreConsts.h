@@ -1,12 +1,12 @@
 /*
  Copyright (C) 2012-2014 Soomla Inc.
-
+ 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
  You may obtain a copy of the License at
-
+ 
  http://www.apache.org/licenses/LICENSE-2.0
-
+ 
  Unless required by applicable law or agreed to in writing, software
  distributed under the License is distributed on an "AS IS" BASIS,
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -85,9 +85,9 @@ namespace soomla {
         static char const *JSON_JSON_TYPE_SINGLE_USE_VG;
         static char const *JSON_JSON_TYPE_UPGRADE_VG;
         static char const *JSON_JSON_TYPE_ITEM;
-
+        
         /** Events **/
-
+        
         static char const *DICT_ELEMENT_BALANCE;
         static char const *DICT_ELEMENT_CURRENCY;
         static char const *DICT_ELEMENT_AMOUNT_ADDED;
@@ -99,6 +99,9 @@ namespace soomla {
         static char const *DICT_ELEMENT_DEVELOPERPAYLOAD;
         static char const *DICT_ELEMENT_RECEIPT;
         static char const *DICT_ELEMENT_EXTRA_INFO;
+        static char const *DICT_ELEMENT_ORIGINAL_JSON;
+        static char const *DICT_ELEMENT_SIGNATURE;
+        static char const *DICT_ELEMENT_USER_ID;
         static char const *DICT_ELEMENT_SUCCESS;
         static char const *DICT_ELEMENT_VERIFIED;
         static char const *DICT_ELEMENT_TRANSACTION;
@@ -120,6 +123,7 @@ namespace soomla {
         static char const *EVENT_ITEM_PURCHASED;
         static char const *EVENT_ITEM_PURCHASE_STARTED;
         static char const *EVENT_MARKET_PURCHASE_CANCELED;
+        static char const *EVENT_MARKET_PURCHASE_DEFERRED;
         static char const *EVENT_MARKET_PURCHASE;
         static char const *EVENT_MARKET_PURCHASE_STARTED;
         static char const *EVENT_MARKET_ITEMS_REFRESHED;
@@ -128,7 +132,8 @@ namespace soomla {
         static char const *EVENT_MARKET_PURCHASE_VERIFICATION;
         static char const *EVENT_RESTORE_TRANSACTION_FINISHED;
         static char const *EVENT_RESTORE_TRANSACTION_STARTED;
-        static char const *EVENT_UNEXPECTED_ERROR_IN_STORE;
+        static char const *EVENT_UNEXPECTED_STORE_ERROR;
+        static char const *EVENT_VERIFICATION_STARTED;
         static char const *EVENT_SOOMLA_STORE_INITIALIZED;
         static char const *EVENT_MARKET_REFUND;
         static char const *EVENT_IAB_SERVICE_STARTED;
