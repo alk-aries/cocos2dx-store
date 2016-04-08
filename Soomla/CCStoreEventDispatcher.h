@@ -130,25 +130,31 @@ namespace soomla {
         virtual void onMarketPurchaseCancelled(CCPurchasableVirtualItem *purchasableVirtualItem);
 
         /**
+         Fired when a market (App Store, Google Play, etc..) purchase has been
+         deferred (iOS only).
+
+         Event Name - CCStoreConsts::EVENT_MARKET_PURCHASE_DEFERRED
+         Event Data (__Dictionary):
+         CCStoreConsts::DICT_ELEMENT_PURCHASABLE - CCPurchasableVirtualItem -
+         the item whose purchase is being deferred.
+         */
+        virtual void onMarketPurchaseDeferred(CCPurchasableVirtualItem *purchasableVirtualItem, cocos2d::__String *payload);
+
+        /**
          Fired when a market item from the store (App Store, Google Play, etc..) 
          has been purchased.
          
          Event Name - CCStoreConsts::EVENT_MARKET_PURCHASE
          Event Data (__Dictionary):
-         CCStoreConsts::DICT_ELEMENT_PURCHASABLE - CCPurchasableVirtualItem -
-         The market item being purchased.
-         CCStoreConsts::DICT_ELEMENT_TOKEN - __String - The purchase token.
-         CCStoreConsts::DICT_ELEMENT_DEVELOPERPAYLOAD - __String -
-         The developer payload.
-         CCStoreConsts::DICT_ELEMENT_ORIGINAL_JSON - __String - Original JSON of
-         the purchase (Google Only)
-         CCStoreConsts::DICT_ELEMENT_SIGNATURE - __String - Purchase signature
-         (Google Only)
-         CCStoreConsts::DICT_ELEMENT_USER_ID - __String - The purchasing user ID
-         (Amazon Only)
-         */
-        virtual void onMarketPurchase(CCPurchasableVirtualItem *purchasableVirtualItem, cocos2d::__String *token, cocos2d::__String *payload, cocos2d::__String *originalJson,
-                                      cocos2d::__String *signature, cocos2d::__String *userId);
+         CCStoreConsts::DICT_ELEMENT_PURCHASABLE - CCPurchasableVirtualItem - The market item being purchased.
+         CCStoreConsts::DICT_ELEMENT_DEVELOPERPAYLOAD - __String - The developer payload.
+         CCStoreConsts::DICT_ELEMENT_EXTRA_INFO - contains platform specific information about the market purchase
+            Android: The "extra" dictionary will contain: 'token', 'orderId', 'originalJson', 'signature', 'userId'
+            iOS: The "extra" dictionary will contain: 'receiptUrl', 'transactionIdentifier', 'receiptBase64',
+                'transactionDate', 'originalTransactionDate', 'originalTransactionIdentifier'
+        */
+        virtual void onMarketPurchase(CCPurchasableVirtualItem *purchasableVirtualItem, cocos2d::__String *payload,
+                cocos2d::__Dictionary *extraInfo);
 
         /**
          Fired when a purchase process has started, where the item is being 
@@ -163,6 +169,16 @@ namespace soomla {
 
         /**
          Fired when a market purchase verification process has started.
+
+         Event Name - CCStoreConsts::EVENT_VERIFICATION_STARTED
+         Event Data (__Dictionary):
+         CCStoreConsts::DICT_ELEMENT_PURCHASABLE - CCPurchasableVirtualItem -
+         The market item whose purchase is being verified.
+         */
+        virtual void onVerificationStarted(CCPurchasableVirtualItem *purchasableVirtualItem);
+
+        /**
+         Fired when a market purchase verification process has finished.
          
          Event Name - CCStoreConsts::EVENT_MARKET_PURCHASE_VERIFICATION
          Event Data (__Dictionary):
@@ -191,14 +207,14 @@ namespace soomla {
         /**
          Fired when an unexpected error occurs in the store.
          
-         Event Name - CCStoreConsts::EVENT_UNEXPECTED_ERROR_IN_STORE
+         Event Name - CCStoreConsts::EVENT_UNEXPECTED_STORE_ERROR
          Event Data (__Dictionary):
-         CCStoreConsts::DICT_ELEMENT_ERROR_MESSAGE - __String -
-         The description of the error which occured (Android Only).
+         CCStoreConsts::DICT_ELEMENT_ERROR_CODE - __Integer -
+         The description of the error which occured.
          */
-        virtual void onUnexpectedErrorInStore(cocos2d::__String *errorMessage);
-        
-        virtual void onUnexpectedErrorInStore(cocos2d::__String *errorMessage, bool alsoPush);
+        virtual void onUnexpectedStoreError(cocos2d::__Integer *errorCode);
+
+        virtual void onUnexpectedStoreError(cocos2d::__Integer *errorCode, bool alsoPush);
 
         /**
          Fired when store controller is initialized.

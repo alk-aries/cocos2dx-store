@@ -4,3 +4,6 @@ local.properties
 TAGS
 out
 xcuserdata
+build/
+
+build.log

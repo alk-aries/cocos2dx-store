@@ -81,7 +81,7 @@ namespace soomla {
     char const *CCStoreConsts::JSON_JSON_TYPE_SINGLE_USE_VG = "SingleUseVG";
     char const *CCStoreConsts::JSON_JSON_TYPE_UPGRADE_VG = "UpgradeVG";
     char const *CCStoreConsts::JSON_JSON_TYPE_ITEM = "VirtualItemReward";
-    
+
     char const *CCStoreConsts::DICT_ELEMENT_BALANCE = "balance";
     char const *CCStoreConsts::DICT_ELEMENT_CURRENCY = "VirtualCurrency";
     char const *CCStoreConsts::DICT_ELEMENT_AMOUNT_ADDED = "amountAdded";
@@ -92,7 +92,7 @@ namespace soomla {
     char const *CCStoreConsts::DICT_ELEMENT_PURCHASABLE_ID = "PurchasableVirtualItemId";
     char const *CCStoreConsts::DICT_ELEMENT_DEVELOPERPAYLOAD = "DeveloperPayload";
     char const *CCStoreConsts::DICT_ELEMENT_RECEIPT = "receipt";
-    char const *CCStoreConsts::DICT_ELEMENT_TOKEN = "token";
+    char const *CCStoreConsts::DICT_ELEMENT_EXTRA_INFO = "extraInfo";
     char const *CCStoreConsts::DICT_ELEMENT_ORIGINAL_JSON = "originalJson";
     char const *CCStoreConsts::DICT_ELEMENT_SIGNATURE = "signature";
     char const *CCStoreConsts::DICT_ELEMENT_USER_ID = "userId";
@@ -117,6 +117,7 @@ namespace soomla {
     char const *CCStoreConsts::EVENT_ITEM_PURCHASED = "CCStoreEventHandler::onItemPurchased";
     char const *CCStoreConsts::EVENT_ITEM_PURCHASE_STARTED = "CCStoreEventHandler::onItemPurchaseStarted";
     char const *CCStoreConsts::EVENT_MARKET_PURCHASE_CANCELED = "CCStoreEventHandler::onMarketPurchaseCancelled";
+    char const *CCStoreConsts::EVENT_MARKET_PURCHASE_DEFERRED = "CCStoreEventHandler::onMarketPurchaseDeferred";
     char const *CCStoreConsts::EVENT_MARKET_PURCHASE = "CCStoreEventHandler::onMarketPurchase";
     char const *CCStoreConsts::EVENT_MARKET_PURCHASE_STARTED = "CCStoreEventHandler::onMarketPurchaseStarted";
     char const *CCStoreConsts::EVENT_MARKET_ITEMS_REFRESHED = "CCStoreEventHandler::onMarketItemsRefreshed";
@@ -125,7 +126,8 @@ namespace soomla {
     char const *CCStoreConsts::EVENT_MARKET_PURCHASE_VERIFICATION = "CCStoreEventHandler::onMarketPurchaseVerification";
     char const *CCStoreConsts::EVENT_RESTORE_TRANSACTION_FINISHED = "CCStoreEventHandler::onRestoreTransactionsFinished";
     char const *CCStoreConsts::EVENT_RESTORE_TRANSACTION_STARTED = "CCStoreEventHandler::onRestoreTransactionsStarted";
-    char const *CCStoreConsts::EVENT_UNEXPECTED_ERROR_IN_STORE = "CCStoreEventHandler::onUnexpectedErrorInStore";
+    char const *CCStoreConsts::EVENT_UNEXPECTED_STORE_ERROR = "CCStoreEventHandler::onUnexpectedStoreError";
+    char const *CCStoreConsts::EVENT_VERIFICATION_STARTED = "CCStoreEventHandler::onVerificationStarted";
     char const *CCStoreConsts::EVENT_SOOMLA_STORE_INITIALIZED = "CCStoreEventHandler::onSoomlaStoreInitialized";
     char const *CCStoreConsts::EVENT_MARKET_REFUND = "CCStoreEventHandler::onMarketRefund";
     char const *CCStoreConsts::EVENT_IAB_SERVICE_STARTED = "CCStoreEventHandler::onIabServiceStarted";

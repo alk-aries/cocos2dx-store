@@ -98,7 +98,7 @@ namespace soomla {
         static char const *DICT_ELEMENT_PURCHASABLE_ID;
         static char const *DICT_ELEMENT_DEVELOPERPAYLOAD;
         static char const *DICT_ELEMENT_RECEIPT;
-        static char const *DICT_ELEMENT_TOKEN;
+        static char const *DICT_ELEMENT_EXTRA_INFO;
         static char const *DICT_ELEMENT_ORIGINAL_JSON;
         static char const *DICT_ELEMENT_SIGNATURE;
         static char const *DICT_ELEMENT_USER_ID;
@@ -123,6 +123,7 @@ namespace soomla {
         static char const *EVENT_ITEM_PURCHASED;
         static char const *EVENT_ITEM_PURCHASE_STARTED;
         static char const *EVENT_MARKET_PURCHASE_CANCELED;
+        static char const *EVENT_MARKET_PURCHASE_DEFERRED;
         static char const *EVENT_MARKET_PURCHASE;
         static char const *EVENT_MARKET_PURCHASE_STARTED;
         static char const *EVENT_MARKET_ITEMS_REFRESHED;
@@ -131,7 +132,8 @@ namespace soomla {
         static char const *EVENT_MARKET_PURCHASE_VERIFICATION;
         static char const *EVENT_RESTORE_TRANSACTION_FINISHED;
         static char const *EVENT_RESTORE_TRANSACTION_STARTED;
-        static char const *EVENT_UNEXPECTED_ERROR_IN_STORE;
+        static char const *EVENT_UNEXPECTED_STORE_ERROR;
+        static char const *EVENT_VERIFICATION_STARTED;
         static char const *EVENT_SOOMLA_STORE_INITIALIZED;
         static char const *EVENT_MARKET_REFUND;
         static char const *EVENT_IAB_SERVICE_STARTED;

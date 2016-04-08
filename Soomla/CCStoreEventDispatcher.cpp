@@ -115,13 +115,15 @@ namespace soomla {
                     CC_ASSERT(virtualGood);
 
                     error = NULL;
-                    CCUpgradeVG *upgradeVG =
-                            dynamic_cast<CCUpgradeVG *>(CCStoreInfo::sharedStoreInfo()->getItemByItemId(vguItemId->getCString(), &error));
-                    if (error) {
-                        CCSoomlaUtils::logException(CCStoreConsts::EVENT_GOOD_UPGRADE, error);
-                        return;
+                    CCUpgradeVG *upgradeVG = NULL;
+                    if (vguItemId) {
+                        upgradeVG = dynamic_cast<CCUpgradeVG *>(CCStoreInfo::sharedStoreInfo()->getItemByItemId(vguItemId->getCString(), &error));
+                        if (error) {
+                            CCSoomlaUtils::logException(CCStoreConsts::EVENT_GOOD_UPGRADE, error);
+                            return;
+                        }
+                        CC_ASSERT(upgradeVG);
                     }
-                    CC_ASSERT(upgradeVG);
                     this->onGoodUpgrade(virtualGood, upgradeVG);
                 });
 
@@ -168,6 +170,21 @@ namespace soomla {
                     this->onMarketPurchaseCancelled(purchasableVirtualItem);
                 });
 
+        eventDispatcher->registerEventHandler(CCStoreConsts::EVENT_MARKET_PURCHASE_DEFERRED,
+                [this](__Dictionary *parameters) {
+                    __String *itemId = (__String *)(parameters->objectForKey("itemId"));
+                    __String *payload = (__String *)(parameters->objectForKey("payload"));
+                    CCError *error = NULL;
+                    CCPurchasableVirtualItem *purchasableVirtualItem =
+                            dynamic_cast<CCPurchasableVirtualItem *>(CCStoreInfo::sharedStoreInfo()->getItemByItemId(itemId->getCString(), &error));
+                    if (error) {
+                        CCSoomlaUtils::logException(CCStoreConsts::EVENT_MARKET_PURCHASE_DEFERRED, error);
+                        return;
+                    }
+                    CC_ASSERT(purchasableVirtualItem);
+                    this->onMarketPurchaseDeferred(purchasableVirtualItem, payload);
+                });
+
         eventDispatcher->registerEventHandler(CCStoreConsts::EVENT_MARKET_PURCHASE,
                 [this](__Dictionary *parameters) {
                     __String *itemId = (__String *)(parameters->objectForKey("itemId"));
@@ -179,12 +196,9 @@ namespace soomla {
                         return;
                     }
                     CC_ASSERT(purchasableVirtualItem);
-                    __String *token = (__String *)(parameters->objectForKey("token"));
                     __String *payload = (__String *)(parameters->objectForKey("payload"));
-                    __String *originalJson = (__String *)(parameters->objectForKey("originalJson"));
-                    __String *signature = (__String *)(parameters->objectForKey("signature"));
-                    __String *userId = (__String *)(parameters->objectForKey("userId"));
-                    this->onMarketPurchase(purchasableVirtualItem, token, payload, originalJson, signature, userId);
+                    __Dictionary *extraInfo = (__Dictionary *)(parameters->objectForKey("extraInfo"));
+                    this->onMarketPurchase(purchasableVirtualItem, payload, extraInfo);
                 });
 
         eventDispatcher->registerEventHandler(CCStoreConsts::EVENT_MARKET_PURCHASE_STARTED,
@@ -273,6 +287,20 @@ namespace soomla {
                     __String *errorMessage = (__String *)(parameters->objectForKey("errorMessage"));
                     this->onMarketItemsRefreshFailed(errorMessage);
                 });
+        
+        eventDispatcher->registerEventHandler(CCStoreConsts::EVENT_VERIFICATION_STARTED,
+                [this](__Dictionary *parameters) {
+                    __String *itemId = (__String *)(parameters->objectForKey("itemId"));
+                    CCError *error = NULL;
+                    CCPurchasableVirtualItem *purchasableVirtualItem =
+                            dynamic_cast<CCPurchasableVirtualItem *>(CCStoreInfo::sharedStoreInfo()->getItemByItemId(itemId->getCString(), &error));
+                    if (error) {
+                        CCSoomlaUtils::logException(CCStoreConsts::EVENT_VERIFICATION_STARTED, error);
+                        return;
+                    }
+                    CC_ASSERT(purchasableVirtualItem);
+                    this->onVerificationStarted(purchasableVirtualItem);
+                });
 
         eventDispatcher->registerEventHandler(CCStoreConsts::EVENT_MARKET_PURCHASE_VERIFICATION,
                 [this](__Dictionary *parameters) {
@@ -299,10 +327,10 @@ namespace soomla {
                     this->onRestoreTransactionsStarted();
                });
 
-        eventDispatcher->registerEventHandler(CCStoreConsts::EVENT_UNEXPECTED_ERROR_IN_STORE,
+        eventDispatcher->registerEventHandler(CCStoreConsts::EVENT_UNEXPECTED_STORE_ERROR,
                 [this](__Dictionary *parameters) {
-                    __String *errorMessage = (__String *)(parameters->objectForKey("errorMessage"));
-                    this->onUnexpectedErrorInStore(errorMessage);
+                    __Integer *errorCode = (__Integer *)(parameters->objectForKey("errorCode"));
+                    this->onUnexpectedStoreError(errorCode);
                });
 
         eventDispatcher->registerEventHandler(CCStoreConsts::EVENT_SOOMLA_STORE_INITIALIZED,
@@ -391,7 +419,9 @@ namespace soomla {
         
         __Dictionary *eventDict = __Dictionary::create();
         eventDict->setObject(virtualGood, CCStoreConsts::DICT_ELEMENT_GOOD);
-        eventDict->setObject(upgradeVG, CCStoreConsts::DICT_ELEMENT_UPGRADEVG);
+        if (upgradeVG != NULL) {
+            eventDict->setObject(upgradeVG, CCStoreConsts::DICT_ELEMENT_UPGRADEVG);
+        }
         
         Director::getInstance()->getEventDispatcher()->dispatchCustomEvent(CCStoreConsts::EVENT_GOOD_UPGRADE, eventDict);
     }
@@ -453,24 +483,21 @@ namespace soomla {
         Director::getInstance()->getEventDispatcher()->dispatchCustomEvent(CCStoreConsts::EVENT_MARKET_PURCHASE_CANCELED, eventDict);
     }
 
-    void CCStoreEventDispatcher::onMarketPurchase(CCPurchasableVirtualItem *purchasableVirtualItem, cocos2d::__String *token, cocos2d::__String *payload, cocos2d::__String *originalJson,
-                                                  cocos2d::__String *signature, cocos2d::__String *userId) {
+    void CCStoreEventDispatcher::onMarketPurchaseDeferred(CCPurchasableVirtualItem *purchasableVirtualItem, cocos2d::__String *payload) {
         __Dictionary *eventDict = __Dictionary::create();
         eventDict->setObject(purchasableVirtualItem, CCStoreConsts::DICT_ELEMENT_PURCHASABLE);
-        eventDict->setObject(token, CCStoreConsts::DICT_ELEMENT_TOKEN);
         eventDict->setObject(payload, CCStoreConsts::DICT_ELEMENT_DEVELOPERPAYLOAD);
-        if (originalJson != NULL) {
-            eventDict->setObject(originalJson, CCStoreConsts::DICT_ELEMENT_ORIGINAL_JSON);
-        }
-        
-        if (signature != NULL) {
-            eventDict->setObject(signature, CCStoreConsts::DICT_ELEMENT_SIGNATURE);
-        }
-        
-        if (userId != NULL) {
-            eventDict->setObject(userId, CCStoreConsts::DICT_ELEMENT_USER_ID);
-        }
-        
+
+        Director::getInstance()->getEventDispatcher()->dispatchCustomEvent(CCStoreConsts::EVENT_MARKET_PURCHASE_DEFERRED, eventDict);
+    }
+
+    void CCStoreEventDispatcher::onMarketPurchase(CCPurchasableVirtualItem *purchasableVirtualItem, cocos2d::__String *payload, cocos2d::__Dictionary *extraInfo) {
+
+        __Dictionary *eventDict = __Dictionary::create();
+        eventDict->setObject(purchasableVirtualItem, CCStoreConsts::DICT_ELEMENT_PURCHASABLE);
+        eventDict->setObject(payload, CCStoreConsts::DICT_ELEMENT_DEVELOPERPAYLOAD);
+        eventDict->setObject(extraInfo, CCStoreConsts::DICT_ELEMENT_EXTRA_INFO);
+
         Director::getInstance()->getEventDispatcher()->dispatchCustomEvent(CCStoreConsts::EVENT_MARKET_PURCHASE, eventDict);
     }
 
@@ -479,6 +506,13 @@ namespace soomla {
         eventDict->setObject(purchasableVirtualItem, CCStoreConsts::DICT_ELEMENT_PURCHASABLE);
         
         Director::getInstance()->getEventDispatcher()->dispatchCustomEvent(CCStoreConsts::EVENT_MARKET_PURCHASE_STARTED, eventDict);
+    }
+
+    void CCStoreEventDispatcher::onVerificationStarted(CCPurchasableVirtualItem *purchasableVirtualItem) {
+        __Dictionary *eventDict = __Dictionary::create();
+        eventDict->setObject(purchasableVirtualItem, CCStoreConsts::DICT_ELEMENT_PURCHASABLE);
+
+        Director::getInstance()->getEventDispatcher()->dispatchCustomEvent(CCStoreConsts::EVENT_VERIFICATION_STARTED, eventDict);
     }
 
     void CCStoreEventDispatcher::onMarketPurchaseVerification(CCPurchasableVirtualItem *purchasableVirtualItem) {
@@ -499,26 +533,22 @@ namespace soomla {
         Director::getInstance()->getEventDispatcher()->dispatchCustomEvent(CCStoreConsts::EVENT_RESTORE_TRANSACTION_STARTED);
     }
 
-    void CCStoreEventDispatcher::onUnexpectedErrorInStore(cocos2d::__String *errorMessage) {
-        onUnexpectedErrorInStore(errorMessage, false);
+    void CCStoreEventDispatcher::onUnexpectedStoreError(cocos2d::__Integer *errorCode) {
+        onUnexpectedStoreError(errorCode, false);
     }
 
-    void CCStoreEventDispatcher::onUnexpectedErrorInStore(cocos2d::__String *errorMessage, bool alsoPush) {
-        if (errorMessage == NULL) {
-            errorMessage = __String::create("");
-        }
-        
+    void CCStoreEventDispatcher::onUnexpectedStoreError(cocos2d::__Integer *errorCode, bool alsoPush) {
         __Dictionary *eventDict = __Dictionary::create();
-        eventDict->setObject(errorMessage, CCStoreConsts::DICT_ELEMENT_ERROR_MESSAGE);
+        eventDict->setObject(errorCode, CCStoreConsts::DICT_ELEMENT_ERROR_CODE);
         
-        Director::getInstance()->getEventDispatcher()->dispatchCustomEvent(CCStoreConsts::EVENT_UNEXPECTED_ERROR_IN_STORE, eventDict);
+        Director::getInstance()->getEventDispatcher()->dispatchCustomEvent(CCStoreConsts::EVENT_UNEXPECTED_STORE_ERROR, eventDict);
 
         if (alsoPush) {
             #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS) || (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
                         
             __Dictionary *params = __Dictionary::create();
-            params->setObject(__String::create("CCStoreEventDispatcher::pushOnUnexpectedErrorInStore"), "method");
-            params->setObject(errorMessage, "errorMessage");
+            params->setObject(__String::create("CCStoreEventDispatcher::pushOnUnexpectedStoreError"), "method");
+            params->setObject(errorCode, "errorCode");
             CCNdkBridge::callNative (params, NULL);
             
             #endif
